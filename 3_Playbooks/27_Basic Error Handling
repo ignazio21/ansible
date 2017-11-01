@@ -1,0 +1,18 @@
+# HANDLE ERRORS
+# This to continue our playbook even if an ERROR is detected
+# IGNORE ERRORS default set to NO
+
+$vi errors.yml
+
+--- # ERROR PLAYBOOK
+- hosts: nodes
+  remote_user: vagrant
+  become: yes
+  connection: ssh
+  gather_facts: no
+  tasks:
+    - name: Execute a command that will fail
+      command: /bin/false
+      ignore_errors: yes
+    - name: Install telnet
+      yum: pkg=telnet state=latest

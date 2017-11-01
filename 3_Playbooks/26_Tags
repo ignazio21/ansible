@@ -1,0 +1,59 @@
+# Assign a NAME to REFER to
+# Install packages
+# Verify packages are installed
+
+$vi tags.yml
+
+--- # TAG FUNCTIONALITY
+- hosts: nodes
+  remote_user: vagrant
+  become: yes
+  connection: ssh
+  gather_facts: no
+  tasks:
+    - name: Install telnet and lynks packages
+      yum: pkg={{ item }} state=latest
+      with_items:
+         - telnet
+         - lynx
+      tags:
+         - packages
+    - name: Verify telnet is installed
+      raw: yum list installed | grep telnet > /home/vagrant/pkg.log
+      tags:
+        - verification
+
+# Using tags we can say to RUN or SKIP something in particular to the YAML file
+# The following will run only the VERIFICATION
+
+$ansible-playbook tags.yml --tags "verification"
+
+# The following instead we say to RUN the installation of PACKAGES
+
+$ansible-playbook tags.yml --tags "packages"
+
+# TO SKIP instead
+
+$ansible-playbook tags.yml --skip-tags "packages"
+
+# To RUN ALWAYS instead of specific skipped
+# This means that even if we RUN --tags "packages", the tag "always" will however RUN too
+
+--- # TAG FUNCTIONALITY
+- hosts: nodes
+  remote_user: vagrant
+  become: yes
+  connection: ssh
+  gather_facts: no
+  tasks:
+    - name: Install telnet and lynks packages
+      yum: pkg={{ item }} state=latest
+      with_items:
+         - telnet
+         - lynx
+      tags:
+         - packages
+    - name: Verify telnet is installed
+      raw: yum list installed | grep telnet > /home/vagrant/pkg.log
+      tags:
+        - always

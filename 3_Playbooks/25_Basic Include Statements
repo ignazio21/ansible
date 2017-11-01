@@ -1,0 +1,33 @@
+# When everything become more complex, BREAK the MAIN file into multiple
+# Plays files and then import them into the MAIN file
+
+$mkdir playbook/plays
+$cd plays
+
+# Create a PLAY that install TELNET and LYNX
+# A PLAY IS NOT A PLAYBOOK file
+# CREATE a PLAY to DEFINE TASKS
+# This file will then be imported into the MAIN YAML file
+
+$vim packages.yml
+
+- name: Install the telnet client
+  yum: pkg=telnet state=latest
+- name: Install Lynx
+  yum: pkg=lynx state=latest
+
+# FULL YAML to INCLUDE the package.yml
+
+$cd ..
+$vi include.yml
+
+--- # FULL INCLUDE TASKS
+- hosts: nodes
+  remote_user: vagrant
+  become: yes
+  connection: ssh
+  gather_facts: no
+  tasks:
+    - include: plays/package.yml
+    - name: verify telnet package is installed
+      raw: yum list installed | grep telnet > /home/vagrant/pkgs.log

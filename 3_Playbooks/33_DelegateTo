@@ -1,0 +1,17 @@
+# RUN a command locally instead of running it on NODES
+# This using DELEGATE_TO
+
+$vi delegateto.yml
+
+--- # DELEGATION
+
+- hosts: nodes
+  user: vagrant
+  become: yes
+  connection: ssh
+  tasks:
+  - name: run a remote ping
+    command: ping -c 4 nodes > /home/vagrant/playbooks/ping.out
+    delegate_to: 127.0.0.1
+  - name: Install a package
+    yum: pkg=lynx state=latest

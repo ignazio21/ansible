@@ -1,0 +1,28 @@
+# How to start PARTS of the PLAYBOOK
+# This is going to be done using TAGS
+
+$vi startat.yml
+
+--- # START AT PLAYBOOK EXAMPLE
+
+....
+
+  tasks:
+  - name: Install docker
+    yum: pkg=docker state=latest
+  - name: Install telnet
+    yum: pkg=telnet state=latest
+    register: result
+  - debug: var=result
+
+# To start the PLAYBOOK at TELNET point (skipping docker) run the following:
+
+$ansible-playbook startat.yml --start-at-task='Install telnet'
+
+# While instead use STEP to validate at prompt the action:
+
+$ansible-playbook startat.yml --step
+
+Y: Yes
+N: No
+C: "Continue yes from here"

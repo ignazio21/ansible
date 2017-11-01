@@ -1,0 +1,14 @@
+$ vi fromcmd.yml
+
+--- # PASS VARIABLES AT CMD
+
+- hosts: '{{ hosts }}''
+  user: '{{ user }}'
+  become: yes
+  connection: ssh
+  gather_facts: no
+  tasks:
+  - name: Install the package
+    yum: pkg={{ pkg }} state=latest
+
+$ansible-playbook fromcmd.yml --extra-vars "hosts=nodes user=vagrant pkg=telnet"

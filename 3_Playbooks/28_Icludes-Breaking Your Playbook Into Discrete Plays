@@ -1,0 +1,43 @@
+# Before ROLES, breakdown a Master file was easiest when having a large structure
+# Discrete Plays
+
+$mkdir include
+$mkdir include/packages
+$mkdir include/commands
+$mkdir include/variables
+$mkdir include/handlers
+
+$cd include/packages
+$vi packages.yml
+- name: Install the apache web server
+  yum: pkg=httpd state=latest
+  notify: Restart HTTPD
+- name: Install the Lynx Web Browser
+  yum: pkg=lynx state=latest
+
+$cd include/variables
+$vi variables.yml
+version: 0.1.b
+
+$cd include/commands
+$vi commands.yml
+- name: Make sure lynx is installed and then login
+  raw: yum list installed | grep lynx > /home/vagrant/install.log
+
+$cd include/handler
+$vi handlers.myl
+- name: Restart HTTPD
+  service: name=httpd state=restarted
+
+$vi include/webstuff.yml
+- hosts: nodes
+  remote_user: vagrant
+  become: yes
+  connection: ssh
+  vars_files:
+    - variables/variables.yml
+  tasks:
+    - include: packages/packages.yml
+    - include: commands/commands.yml
+  handlers:
+    - include: handlers/handlers.yml

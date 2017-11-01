@@ -1,0 +1,56 @@
+# TEMPLATES allows to abstract the CONFIGURATION
+# JIJA2 TAMPLATE
+
+$vi test.conf
+
+# Configuration for our custom widget
+
+<Connectivity>
+  ConnectionType SSH
+</Connectivity>
+
+<Account Information>
+   Username testuser
+   Password Password1
+</Account Information>
+
+<System Information>
+   DistributionType Linux
+</System Information>
+
+# TO CUSTOMIZE the CONF file:
+
+$vi test.conf.j2
+
+# Configuration for our custom widget
+
+<Connectivity>
+  ConnectionType {{ connectionType }}
+</Connectivity>
+
+<Account Information>
+   Username {{ userName }}
+   Password {{ userPassword }}
+</Account Information>
+
+<System Information>
+   DistributionType {{ ansible_os_family }}
+</System Information>
+
+$vi testj2module.yml
+
+--- # TEST J2 Module
+
+- hosts: nodes
+  connection: ssh
+  user: vagrant
+  become: yes
+  gather_facts: yes
+  vars:
+    userName: vagrant
+    userPassword: password123
+    connectionType: SFTP
+  tasks:
+    - name: Install the configuration file customized for the system
+      template: src=test.conf.j2 dest=/home/vagrant/test.conf owner=vagrant group=vagrant mode=750
+      
