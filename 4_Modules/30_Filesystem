@@ -1,0 +1,36 @@
+# prepare the filesystem
+# for the mount
+# Now will only do the PARTITION
+
+-> In a remote server
+$sudo fdisk -l
+
+# Create a new partition
+$sudo fdisk /dev/xvdf
+ (accept default)
+
+-> On the control server
+$vi filesystem.yml
+
+--- # Filesystem module
+- hosts: <host with new partition>
+  ...
+  tasks:
+    - name: Format the remote data partition
+      filesystem: fstype=ext3 dev=/dev/xvdf1 opts="-cc"
+
+-> Remote server
+$df -h
+
+-> See still not mounted
+
+-> Run the playbook
+
+-> Now the partition is formatted
+-> Create a mount point
+
+$ cd /mnt
+$ sudo mkdir tmp
+$ sudo mount /dev/xvdf1
+$df -h
+$ sudo umount tmp

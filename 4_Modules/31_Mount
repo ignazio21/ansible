@@ -1,0 +1,31 @@
+# Interact with the underlying filesystem
+# This to continue the FILESYSTEM module YML file
+
+-> In a remote server:
+$sudo fdisk -l
+$cd /mnt
+$sudo mkdir data
+$df -h
+
+-> See partition not mounted
+
+-> Control server
+
+$vi mount.yml
+
+- hosts: <to mount remote server>
+  ...
+  task:
+    - name: mount the remote data partition
+      # Mount by name
+      mount: name=/mtn/data src=/dev/xvdf1 fstype=ext3 opts=rw state=present
+      # Mount by uuid
+      mount: src='UUID=<something>'
+
+-> Run the playbook
+
+-> In the remote server
+
+$df -h
+
+-> Now the partition is mount!!

@@ -1,0 +1,21 @@
+# Add a secure key
+# remote system trust the repo adding by verifying with an encryption key that packages have been verfied
+# All on DEBIAN systems
+
+--- # APTKEY & APTREPO Modules
+
+- hosts:
+  ...
+  tasks:
+    - name: Install a dependency needed for apt_repository
+      apt: pkg=python-apt state=latest
+    - name: Add the repo key
+      apt_key: url=https://dl-ssl.google.com/linux/linux_signign_key.pub state=present
+    - name: Add the google repo for ubuntu
+      apt_repository: repo='deb http://dl.google.com/linux/deb stable main non-free' state=present
+
+-> In the remote server
+
+$apt-get update
+
+-> It will download all packages related to that repository added

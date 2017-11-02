@@ -1,0 +1,24 @@
+# add repository to our distribution
+# Debian this case
+# Used in conjuction with APT-KEY Module
+
+-> In a remote Debian server
+# Where all Repositories reside
+$cat /etc/apt/sources.list
+
+-> In the control server
+--- # AptRepo module
+
+- hosts:
+  ...
+  tasks:
+    - name: Install a dependency needed for apt_repository
+      apt: pkg=python-apt state=latest
+    - name: Add the google repo for ubuntu
+      apt_repository: repo='deb http://dl.google.com/linux/deb stable main non-free' state=present
+
+-> The playbook run will fail because:
+# We have not installed the public key
+
+-> Check APTKEY Module
+-> Then run again the playbook

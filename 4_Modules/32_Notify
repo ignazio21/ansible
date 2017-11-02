@@ -1,0 +1,15 @@
+# HANDLER
+# Notify an Handler that something happened
+# Something Happen
+
+--- # NOTIFY module
+
+- hosts:
+  ...
+  tasks:
+    - name: Install httpd
+      yum: pkg=httpd state=latest
+      notify: Restart Httpd
+  handlers:
+    - name: Restart Httpd
+      yum: pkg=httpd state=restarted
