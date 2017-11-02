@@ -1,0 +1,17 @@
+# Pause the execution
+# - SECONDS to stop for a range of time
+# - PROMPT to stop and continue when the USER press ENTER
+
+--- # Pause playbook
+
+- hosts:
+...
+  tasks:
+    - name: Installing tomcat
+      yum: pkg=tomcat state=installed
+      pause:
+        pause:
+        # prompt: "Pause for some time"
+        # seconds: 4
+    - name: verify lynx installation
+      yum: pkg=lynx state=present

@@ -1,0 +1,11 @@
+
+$ansible <nodes> -m setup -a 'filter=ansible_os_family'
+$ansible <nodes> -m setup -a 'filter=ansible_architecture'
+$ansible <nodes> -m setup -a 'filter=ansible_distribution*'
+$ansible <nodes> -m setup -a 'filter=ansible_domain'
+$ansible <nodes> -m setup -a 'filter=ansible_fqdn'
+$ansible <nodes> -m setup -a 'filter=ansible_interfaces'
+$ansible <nodes> -m setup -a 'filter=ansible_kernel'
+$ansible <nodes> -m setup -a 'filter=ansible_memtotal_mb'
+$ansible <nodes> -m setup -a 'filter=ansible_proc*'
+$ansible <nodes> -m setup -a 'filter=ansible_virt*'

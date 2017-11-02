@@ -1,0 +1,18 @@
+# Equivalent of yum upgrade
+# STATES
+# - latest
+# - present
+# - installed
+# - restarted
+# - removed
+
+--- # YUM module
+
+- hosts:
+...
+  tasks:
+    - name: install apache
+      yum: pkg=httpd state=installed
+    - name: Equivalent of yum upgrade  
+      yum: pkg=* state=latest
+    -

@@ -1,0 +1,18 @@
+
+# To:
+# - FILE to get a file
+# - COPY to copy a file with SRC and DST
+# - FILE to create a directory with permissions
+# - COMMAND to remove a directory or file
+
+$ansible <nodes> -s -m file -a 'path=/etc/fstab'
+
+$ansible <nodes> -s -m file -a 'path=/etc'
+
+$ansible <nodes> -s -m file -a 'path=/tmp/etc state=directory mode=0700 owner=root'
+
+#COPY A FILE
+$ansible <nodes> -s -m copy -a 'src=/etc/fstab dest=/tmp/etc/fstab'
+
+#REMOVE a directory
+$ansible <nodes> -s -m command -a 'rm -rf /tmp/etc/fstab removes=/tmp/fstab'
