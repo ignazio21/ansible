@@ -1,0 +1,13 @@
+--- # Copy Module
+
+# Copy file from Local to Remote system
+# change ownership
+# Set permissions
+- hosts:
+...
+  tasks:
+    - name: copy a file not created
+      action: copy src=files/test1.txt dest=/home/vagrant/test1.text owner=vagrant group=vagrant mode=0655
+    # change permission to a file that already exists
+    # backup it
+      action: copy src=files/test1.txt dest=/home/vagrant/test1.text owner=vagrant group=vagrant mode=0655 backup=yes

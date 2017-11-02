@@ -1,0 +1,9 @@
+# Manage GROUPS
+
+
+--- # Group module
+- hosts:
+  ...
+  tasks:
+    - name: Create a group
+      group: name=greatgroup state=present

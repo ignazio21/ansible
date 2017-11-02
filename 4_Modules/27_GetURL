@@ -1,0 +1,9 @@
+# download a file from a website
+
+--- # GetURL module
+
+- hosts:
+  ...
+  tasks:
+    - name: Get and download a file
+      geturl: url=http://<something> dest=/home/vagrant/<file.something> mode=0440

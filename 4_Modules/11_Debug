@@ -1,0 +1,21 @@
+--- # Debug
+
+# retrieve JSON and can use information for other execution
+
+- hosts:
+...
+  tasks:
+    - name: Install Docker
+      yum: pkg=docker state=installed
+    - name: Check Docker status
+      yum: pkg=docker state=present
+      register: docker_status
+    - debug: var=docker_status
+
+      # OR to show a given message
+    - debug: msg="Equivalent of sudo yum install docker"
+
+    - name: How long has the system been up?
+      shell: /usr/bin/uptime
+      register: system_up_time
+    - debug: var=system_up_time

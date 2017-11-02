@@ -1,0 +1,16 @@
+--- # SetFact
+
+# Facts can be set and then be used later to execute other stuff
+# Ex. Cross Facts recall from another playbook
+
+- hosts:
+...
+  gather_facts: no
+  vars:
+    playbook_version: 0.1
+  tasks:
+    - name: local variable display
+      set_fact:
+        singlefact: something
+    - debug: msg={{ playbook_version }}
+    - debug: msg={{ singlefact }}

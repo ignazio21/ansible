@@ -1,0 +1,14 @@
+# Retrieve facts or info from linux directory
+# Understand the type: file, directory, link ans so on
+# USE IT FOR LOGS, DIRECTORIES, FILES
+
+--- # Stat
+
+- hosts:
+  ...
+  tasks:
+    - name:  Does a file/directory in a path exist or not?
+      stat: path=/home/vagrant/abc
+        register: result
+    - debug: msg="The path exist and is a dir"
+        when: result.stat.isdir is defined and result.stat.isdir

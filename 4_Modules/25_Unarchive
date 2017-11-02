@@ -1,0 +1,17 @@
+# Unarchive tar/gzip file
+
+--- # Unarchive module
+
+- hosts:
+  ...
+  tasks:
+    - name: copy and unarchive a file
+      unarchive: src=test.tar.gz dest=/home/vagrant/unarchive
+      # If already present
+      unarchive: src=test.tar.gz dest=/home/vagrant/unarchive copy=no
+
+$tar cvfz test.tar.gz *
+
+-> Run the playbook
+
+# It will copy and untar the file in the DEST path

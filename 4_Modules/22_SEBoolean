@@ -1,0 +1,23 @@
+# Set Boolean values to yes/no
+
+# Check status of Policies
+$getsebool -a | grep httpd
+
+--- # SEBoolean
+
+- hosts:
+  ...
+  tasks:
+    - name: change boolean for anonymous writes on web server
+      seboolean: name=httpd_anon_write state=yes persistent=yes
+      seboolean: name=httpd_anon_write state=no persistent=yes
+
+$getsebool httpd_anon_write
+
+ -> says OFF
+
+-> Run the playbook
+
+$getsebool httpd_anon_write
+
+-> NOW IS ON

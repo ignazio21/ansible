@@ -1,0 +1,14 @@
+# Install packages on REDHAT
+# Replace YUM
+# Not installed by default
+
+--- # DNF Module
+- hosts:
+...
+  tasks:
+    - name: Install Docker via DNF
+      dnf: pkg=docker state=installed
+    - name: Install a group
+      dnf: name="@Development tools" state=present
+    - name: Install from a URL
+      dnf: name=<URL> state=present

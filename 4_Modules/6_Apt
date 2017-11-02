@@ -1,0 +1,10 @@
+--- # APT
+
+- hosts:
+...
+
+  tasks:
+    - name: Equivalent of 'apt-get update'
+      apt: update_cache=yes
+    - name: Install and update
+      apt: name=lynx state=installed update_cache=yes

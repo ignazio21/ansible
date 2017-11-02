@@ -1,0 +1,15 @@
+# send an email externally
+# ex. from the controlserver
+# ex. using the remote server
+
+--- # Mail module
+- hosts:
+  ...
+  tasks:
+    - name: Send email to test user indicating build completion
+      mail:
+        host='localhost'
+        port=25
+        to="vagrant"
+        subject="Our host is finished deploying"
+        body='System called {{ ansible_hostname }} has been susseccfully set up'

@@ -1,0 +1,12 @@
+# Enable/Disable a specific module on apache web server
+# This for DEBIAN
+# For REDAHT, use COMMAND with HTTPD package
+
+$ls -la /etc/apache2/mods-enabled
+
+--- #
+- hosts:
+...
+  tasks:
+    - name: Disable alias module in apache2
+      apache2_module: state=absent name=alias

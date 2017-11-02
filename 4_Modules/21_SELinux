@@ -1,0 +1,23 @@
+--- # SELinux module
+
+# SELinux is used to secure the system from malicious binaries
+# By default is enabled (ex. [enforce(0),targeted(1)] mode)
+# It is made of policies for executions
+
+# To check SELInux status
+$sestatus
+
+$cat /etc/selinux/config
+
+$vi selinux.yml
+
+- hosts:
+  ...
+  tasks:
+    - name: Change SELinux Conf to Permissive
+      # Only change the configuration
+      selinux: state=disabled
+      # REBOOT the system to take effective
+      #
+      selinux: policy=targeted state=permessive/enforcing
+      #

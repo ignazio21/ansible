@@ -1,0 +1,14 @@
+--- # Service module
+
+# Install and Start the service
+# Enable the service at startup
+
+- hosts:
+...
+  tasks:
+    - name: Install web server
+      yum: pkg=httpd state=installed
+    - name: Start web service
+      service: name=httpd state=started
+    - name: enable http at startup(after reboot)
+      service: name=httpd enabled=yes

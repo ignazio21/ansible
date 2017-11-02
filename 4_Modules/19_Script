@@ -1,0 +1,18 @@
+# To run a script
+
+$vi systemuptime.sh
+#!/bin/bash
+uptime > /home/vagrant/uptime.log
+
+$chmod 755 systemuptime.sh
+
+$vi script.yml
+
+--- # script module
+
+- hosts:
+  ...
+  tasks:
+    - script: /home/vagrant/systemuptime.sh > uptime.log --some-argument 1234
+    # Run the script only if the file HAS NOT already been created
+    - script: /home/vagrant/systemuptime.sh creates=/home/vagrant/uptime.log

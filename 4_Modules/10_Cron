@@ -1,0 +1,13 @@
+--- # Cron module
+
+# add or remove a cron job on a remote system
+- hosts:
+...
+  tasks:
+    - name: add a cron job to the vagrant user
+      # Login as Vagrant, set a Cron job
+      # Run everyday at 1 AM
+      cron: name="list files" minute="0" hour="1" job="ls -la /etc" > /home/vagrant/cronresult.log
+
+      # to remove a cron job
+      cron: name="list files" state=absent

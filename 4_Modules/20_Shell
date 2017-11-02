@@ -1,0 +1,15 @@
+--- # Shell module
+# Execute remotely commands
+# SHELL module for quick commands
+# COMMAND module for more secure execution
+
+# Ex. Run the SHELL command only if when the Dir Logs and File uptime.log does not exist
+
+- hosts:
+  ...
+  tasks:
+    - name: Execute a remote command - uptime
+      shell: /usr/bin/uptime >> uptime.log
+      args:
+        chdir: logs/
+        creates: uptime.log

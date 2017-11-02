@@ -1,0 +1,11 @@
+--- # RAW Module
+
+# just run a command
+# do not worry about parameters
+# bypass the module subsystem (usually be able to save the result)
+
+- hosts:
+  ...
+  tasks:
+    - name: find the system uptime for the 'hosts' above
+      raw: /usr/bin/uptime > uptime.log

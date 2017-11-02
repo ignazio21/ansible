@@ -1,0 +1,20 @@
+$vi test.sh
+
+#!/bin/bash
+echo "this is an output" > output.txt
+
+$vi testing/test.sh
+cp test.sh testing/test.sh
+
+$vi command.yml
+--- # Command module
+
+# Everything executed at command line
+
+- hosts:
+...
+  tasks:
+    - name: check for something
+      command: /home/vagrant/testing/test.sh
+      args:
+        chdir: /home/vagrant/testing

@@ -13,6 +13,5 @@
   tasks:
     - name: install apache
       yum: pkg=httpd state=installed
-    - name: Equivalent of yum upgrade  
+    - name: Equivalent of yum upgrade
       yum: pkg=* state=latest
-    -

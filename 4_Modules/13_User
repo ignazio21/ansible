@@ -1,0 +1,13 @@
+# Add and manipulate user accounts
+
+--- # User mode
+
+- hosts:
+...
+  tasks:
+    - name: Add user
+      user: name=testapache comment="Test Apache" group=wheel
+    - name: another user
+      user: name=testapache2 comment="Test Apache 2" shell=/bin/bash
+    - name: delete user
+      user: name=testapache2 state=absent remove=yes

@@ -1,0 +1,15 @@
+# execute sometime in the future, that is NOT a cron job
+# run a command at some point in the future
+
+--- # AT module
+
+- hosts:
+...
+  tasks:
+    - name: Ex. future command with the AT module
+      # the following will be executed after 1 minute the playbook is executed
+      at: command="ls -la /var/log > /home/vagrant/at.log" count=1 units="minutes"
+      # to remove the command to never run
+      at: command="ls -la /var/log > /home/vagrant/at.log" state=absent
+      # to have a unique job of the same command
+      at: command="ls -la /var/log > /home/vagrant/at.log" unique=true

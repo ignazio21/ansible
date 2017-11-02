@@ -1,0 +1,8 @@
+--- # Ping all hosts
+# receive back a pong
+
+- hosts: all
+  ...
+  tasks:
+    - name: ping hosts
+      ping:
