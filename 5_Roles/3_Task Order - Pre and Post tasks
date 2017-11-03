@@ -1,0 +1,17 @@
+# ROLES will always run first instead of TASKS
+# Said that, to run something use PRE-TASKS section before ROLES section
+# Use POST_TASKS to execute tasks after roles
+
+$vim webservers.yml
+- hosts: ansnode
+  user: vagrant
+  become: yes
+  connection: ssh
+  pre_tasks:
+  - name: When did the role start
+    raw: date > /home/vagrant/startofrole.log
+  roles:
+    - webservers
+  post_tasks:
+  - name: When did the role end
+    raw: date > /home/vagrant/endofrole.log

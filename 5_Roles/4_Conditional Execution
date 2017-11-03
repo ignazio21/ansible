@@ -1,0 +1,14 @@
+# USE CONDITIONAL
+# CONSIDER DISTRIBUTION TYPES
+# USE IGNORE_ERRORS regardless of distribution types
+
+$cd /home/vagrant/playbooks/roles/webservers/tasks
+$vi main.yml
+- name: Install (RedHat/CentOS) Apache Web Server
+  yum: pkg=httpd state=latest
+  when: "ansible_os_family == 'RedHat'"
+  ignore_errors: yes
+- name: Install (Debian/Ubuntu) Apache Web Server
+  apt: pkg=apache2 state=latest
+  when: "ansible_os_family == 'Debian'"
+  ignore_errors: yes

@@ -1,0 +1,26 @@
+# Roles are the Automation around Include
+# to break out the playbook
+# Now how to STRUCTURE an ENVIRONMENT
+
+$mkdir /home/vagrant/playbook/Roles
+$cd Roles
+$mkdir /home/vagrant/playbook/Roles/roles
+$cd roles
+$mkdir /home/vagrant/playbook/Roles/roles/common
+$mkdir /home/vagrant/playbook/Roles/roles/webservers
+$mkdir /home/vagrant/playbook/Roles/roles/appservers
+$mkdir /home/vagrant/playbook/Roles/roles/cachingservers
+$cd /home/vagrant/playbook/Roles/roles/common
+$mkdir /home/vagrant/playbook/Roles/roles/common/files
+$mkdir /home/vagrant/playbook/Roles/roles/common/templates
+$mkdir /home/vagrant/playbook/Roles/roles/common/tasks
+$mkdir /home/vagrant/playbook/Roles/roles/common/handlers
+$mkdir /home/vagrant/playbook/Roles/roles/common/vars
+$mkdir /home/vagrant/playbook/Roles/roles/common/defaults
+$mkdir /home/vagrant/playbook/Roles/roles/common/meta
+
+-> Default dir
+# Default tasks we want to run
+
+-> Meta dir
+# Metadata

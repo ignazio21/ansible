@@ -1,0 +1,33 @@
+$cd /home/vagrant/playbook/Roles/roles/webservers/tasks
+
+-> here create a main.yml
+ -> This because once we include the role into the master playbook
+    it will scan this directories to check if the main.yml exists and will run the tasks automatically
+
+$vi main.yml
+- name: Install Apache web server
+  yum: pkg=httpd state=latest
+  notify: Restart HTTPD
+
+$cd /home/vagrant/playbook/Roles/roles/webservers/handlers
+$vi main.yml
+- name: Restart HTTPD
+  service: name=httpd state=restarted
+
+$cd /home/vagrant/playbook/Roles/roles/webservers/vars
+$vi main.yml
+copyright_msg: Copyright2015
+
+$cd /home/vagrant/playbook/Roles/roles
+
+-> Here create the MASTER PLAYBOOK
+-> JUST define the directory that includes all the subdirectories
+-> that contains a MAIN.YML file
+$vi webservers.yml
+--- # Master Playbook for Web Servers
+- hosts: ansnode
+  user: vagrant
+  become: yes
+  connection: ssh
+  roles:
+    - webservers

@@ -1,0 +1,18 @@
+# Set variables and get the value in the TASKS main.yml
+
+$cd /home/vagrant/playbook/roles/webservers/vars/
+$vi main.yml
+
+redhat_apache: httpd
+debian_httpd: apache2
+
+$cd /home/vagrant/playbook/roles/webservers/tasks/
+$vi main.yml
+- name: Install (RedHat/CentOS) Apache Web Server
+  yum: pkg={{ redhat_apache }} state=latest
+  when: "ansible_os_family == 'RedHat'"
+  ignore_errors: yes
+- name: Install (Debian/Ubuntu) Apache Web Server
+  apt: pkg={{ debian_apache }} state=latest
+  when: "ansible_os_family == 'Debian'"
+  ignore_errors: yes
