@@ -1,0 +1,25 @@
+# Templates to define a configuration file that can contain dynamic content
+# Ansible is based on python standards, that's why YAML was choosed
+# Jinja2 is an extension of python that allows to do templates
+
+$vi test.conf.j2
+# CONFIGURATION to use for one or more server
+# Use VARIABLE SUBSTITUITON
+<Connectivity>
+  ConnectionType {{ connectionType }}
+</Connectivity>
+
+<Account Information>
+  Username {{ userName }}
+  Password {{ userPassword }}
+<Account Information>
+
+<System Information>
+  DistributionType {{ ansible_os_family }}
+</System Information>
+
+--- # Jinja2 Template
+- hosts:
+  ...
+  tasks:
+    - name:

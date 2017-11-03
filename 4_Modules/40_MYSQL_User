@@ -1,0 +1,22 @@
+# MySQL_User
+# Create/maintain user accounts
+
+--- # MySQL_User
+- hosts: <where_mysql_is_installed>
+  ...
+  tasks:
+    - name: Install MySQL Python Support Library
+      yum: pkg=MySQL-python state=latest
+    - name: Create a new user called BOB and give all access
+      # Format for priv is db.table:ALL(,PRIV2)
+      mysql_user: name=bob password=123password priv=*.*:ALL state=present login_user=root login_password=password123
+      # Use VALT file to avoid plain text passwords
+      # To remote the user
+      mysql_user: name=bob password=123password priv=*.*:ALL state=absent login_user=root login_password=password123
+-> On the remote system
+
+$mysql -u bob -p 123password
+$show databases;
+$use MyDBTest;
+$show tables;
+$select * from Persons;

@@ -1,0 +1,18 @@
+# Jinja2 Template already created
+# Template module
+# Use the Jinja2 to run and substitute the variable
+
+--- # Template module playbook
+- hosts:
+  ...
+  vars:
+     userName: vagrant
+     userPassword: passwodsomething
+     connectionType: SFTP
+  tasks:
+    - name: Install the conf file customized for the system
+      template: src=test.conf.j2 dest=/home/vagrant/test.conf owner=vagrant group=vagrant mode=750
+
+-> On the remote system
+
+$cat /home/vagrant/test.conf

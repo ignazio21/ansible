@@ -1,0 +1,23 @@
+# Set and retrieve file access control information
+
+-> In remote system
+$setfacl
+$getfacl
+
+$sudo touch /etc/test.acl.txt
+
+
+-> In control server
+
+--- # ACL module
+- hosts: <host_with_acl>
+  ...
+  tasks:
+    - name: get ACL info on /etc/test.acl.txt remote file
+      acl: name=/etc/test.acl.txt entity=vagrant etype=user permission="rw" state=present
+      register: acl_info
+    - debug: msg={{ acl_info }}
+
+-> execute the playbook
+
+# Will show the permission of the file in JSON

@@ -1,0 +1,26 @@
+# Backlist kernel modules
+# This to avoid modules attempt to reload and interfeer
+# Install 3rd party stuff
+
+-> On remote system check
+$ls -la /etc/modprobe.d/
+$lsmod | grep dummy
+$man modprobe
+
+# To remove a module
+$sudo modprobe -r dummy
+$sudo lsmod | grep dummy
+
+-> Backlist it and it is not going to start
+
+--- # Kernel_Backlist module
+- hosts:
+  ...
+  tasks:
+    - name: blacklist the DUMMY kernel module
+      kernel_blacklist: name=dummy state=present
+      # To remove the blacklist from the LIST!!!
+      kernel_blacklist: name=dummy state=absent
+
+$ll /etc/modprobe.d
+$cat blacklist-ansible.conf

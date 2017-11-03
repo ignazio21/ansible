@@ -1,0 +1,12 @@
+# interact with GIT Repository
+
+--- # GIT module
+- hosts:
+  ...
+  tasks:
+    - name: Check Git Repo on a remote system
+      # To PULL a Repo and create a Local copy
+      git: repo=<ssh/https://repository> dest=/home/vagrant/gitrepo
+      git: repo=<ssh/https://repository> dest=/home/vagrant/gitrepo clone=no update=yes version=<version>
+
+  -> Run the playbook

@@ -1,0 +1,29 @@
+# MySQL_DB
+# Create/Delete a DB
+# Create/Import a Dump
+
+--- # MYSQL_DB Module
+- hosts: <where mysql is installed>
+  ...
+  tasks:
+    - name: Install the python mysql support libraries
+      yum: pkg=MySQL-python state=latest
+    - name: Create a new Test DB called MyNewDB
+      mysql_db: name=MyNewDB state=present login_user=root login_password=password123
+      # Usually the password would be read by a VAULT file (contains encrypted lists of information to include so that password is not plain text)
+      # to delete the DB
+      mysql_db: name=MyNewDB state=absent login_user=root login_password=password123
+      # For a BACKUP of the DB use DUMP as state
+      mysql_db: name=MyDBTest state=dump target=/var/lib/mydbtestbkup.sql login_user=root login_password=password123
+      # To restore a DB from a Backup
+      mysql_db: name=MyDBTest state=import target=/var/lib/mydbtestbkup.sql login_user=root login_password=password123
+
+-> In the remote system
+
+ -> Login to mysql
+
+ $use MyDBTest;
+ $show tables;
+ $select * from Persons;
+
+$cat /var/lib/mydbtestbkup.sql
