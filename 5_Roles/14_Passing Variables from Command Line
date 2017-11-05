@@ -1,0 +1,13 @@
+# How to pass Variable from CMD to Roles
+
+-> Modify
+
+- hosts: ''{{ hosts }}'
+- user: ''{{ user }}''
+...
+roles:
+ - { role: ''{{ role }}',when ...
+
+-> run:
+
+$ansible-playbook dynamic.myl --extra-vars "hosts=ansnode user=vagrant role=redhat_webservers"

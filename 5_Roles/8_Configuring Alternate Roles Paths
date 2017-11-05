@@ -1,0 +1,12 @@
+# Modify the DEFAULT ROLES PATH
+# From the Ansible configuration file
+
+# This is useful for following reasons
+-> shared path for multiple developers
+-> different path playbook/roles
+
+$vi /etc/ansible/ansible.cfg
+
+-> Set "roles_path" to the path where ROLES are now defined
+-> Example
+roles_path = /home/vagrant/playbook/roles/

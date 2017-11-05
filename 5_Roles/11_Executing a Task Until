@@ -1,0 +1,13 @@
+-> Inside the dir /home/vagrant/playbook/roles/redhat_webservers/tasks
+
+...
+- shell: systemctl status httpd
+  register: status_httpd
+  # As soon as the result will be positive, the command will continue to run
+  until: status_httpd.stdout.find("active (running)") != -1
+  # Set numbers of time to retry for x seconds between
+  retrieve: 5
+  delay: 5
+- debug: var=status_httpd
+- debug: Need to install telnet
+  ...

@@ -1,0 +1,14 @@
+# For tasks
+
+- name: ...
+  yum: ..
+  with_items:
+  ...
+  tags: install_list
+
+- name: ...
+  yum: ...
+  register: installed_result
+  tags: installed_result
+
+$ansible-playbook --tags "install_list" masterrole.yml

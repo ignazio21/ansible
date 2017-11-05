@@ -1,0 +1,10 @@
+# Delegate to another hosts that is not in the HOSTS file
+
+...
+pre_tasks:
+- name:
+  raw: ping -c 4 <host> > /<path>/ping.out
+  # This case the localhost has been delegated to run the command against the HOSTS set
+  delegate_to: 127.0.0.1
+roles:
+ - webservers

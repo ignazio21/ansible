@@ -1,0 +1,64 @@
+# RUN ROLES BASED ON (EX) OS_FAMLY
+
+In the directory:
+-> /home/vagrant/playbook/roles/
+
+$mkdir redhat_webservers
+$mkdir debian_webservers
+
+$cd redhat_webservers
+$cp -rf ../webservers/* .
+
+$cd debian_webservers
+$cp -rf ../webservers/* .
+
+In the directory:
+-> /home/vagrant/playbook/
+
+$cp webservers.yml redhatonly.yml
+$vi redhatonly.yml
+- hosts: ansnode
+  user: vagrant
+  become: yes
+  connection: ssh
+  pre_tasks:
+  - name: When did the role start
+    raw: date > /home/vagrant/startofrole.log
+  roles:
+    - redhat_webservers
+  post_tasks:
+  - name: When did the role end
+    raw: date > /home/vagrant/endofrole.log
+
+$cp webservers.yml debianonly.yml
+$vi debianonly.yml
+- hosts: ansnode
+  user: vagrant
+  become: yes
+  connection: ssh
+  pre_tasks:
+  - name: When did the role start
+    raw: date > /home/vagrant/startofrole.log
+  roles:
+    - debian_webservers
+  post_tasks:
+  - name: When did the role end
+    raw: date > /home/vagrant/endofrole.log
+
+# OOOORRRRR
+# define conditional role
+
+$vi webservers.yml
+- hosts: ansnode
+  user: vagrant
+  become: yes
+  connection: ssh
+  pre_tasks:
+  - name: When did the role start
+    raw: date > /home/vagrant/startofrole.log
+  roles:
+  - { role: redhat_webservers, when: "ansible_os_family == 'RedHat'" }
+  - { role: debian_webservers, when: "ansible_os_family == 'Debian'" }
+  post_tasks:
+  - name: When did the role end
+    raw: date > /home/vagrant/endofrole.log

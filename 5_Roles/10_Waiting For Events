@@ -1,0 +1,30 @@
+-> Inside the dir /home/vagrant/playbook/roles/redhat_webservers/tasks
+
+$vi main.yml
+
+-> Remove everything refer to DEBIAN
+-> Remove NOTIFY
+-> Insert after WHEN
+
+- name: Wait for the service to start listening on port 8080
+  wait_for:
+     port: 80
+     state: started
+
+-> Inside the dir /home/vagrant/playbook/
+
+$cp webserver.yml redhat_webserver.yml
+$vi redhat_webserver.yml
+
+- hosts: ansnode
+  user: vagrant
+  become: yes
+  connection: ssh
+  pre_tasks:
+  - name: When did the role start
+    raw: date > /home/vagrant/startofrole.log
+  roles:
+  - { role: redhat_webservers, when: "ansible_os_family == 'RedHat'" }
+  post_tasks:
+  - name: When did the role end
+    raw: date > /home/vagrant/endofrole.log
