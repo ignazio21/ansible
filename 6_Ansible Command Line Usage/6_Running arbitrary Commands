@@ -1,0 +1,7 @@
+# Examples
+
+$ansible all -u vagrant -a 'ls /etc'
+
+$ansible all -u vagrant -a 'ls -la /etc/fstab'
+
+$ansible all -u vagrant -a 'cat /etc/fstab'

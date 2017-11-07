@@ -1,0 +1,5 @@
+# Using a specific user to
+
+$ansible ansnode -u vagrant -s -m ...
+
+# NO more than already known

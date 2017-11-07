@@ -1,0 +1,4 @@
+# Examples
+
+-> The following will create a directory called "install_result" where will be output per server the following command
+$ansible all -s -m yum -a 'pkg=docker state=latest' -t install-results
