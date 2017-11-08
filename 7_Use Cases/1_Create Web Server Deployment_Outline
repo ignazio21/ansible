@@ -1,0 +1,37 @@
+$mkdir /home/vagrant/usecases
+
+$vi mywebserver.txt
+
+- Build an Apache Web Server
+- Deploy the webserver with the ansible user
+- Ansible user needs sudo
+- Connection type ssh rather than paramiko
+- Leave gathering of facts on
+
+- Info Needed:
+   - apache web server package
+   - distribution running on
+   - apache version
+   - web server directory customized
+   - what is the site name
+
+- What needs to be done
+  - Install apache web server on remote system(s)
+  - create the web server directory
+  - web server directory has proper ownership
+  - configuration of apache
+    - copy the http configuration file
+    - set up the vhost directory
+    - add any ssl keys if needed
+  - copy the site code to the new directory
+  - start the apache service
+  - add/enable any modules needed
+    - mysql/mariadb
+    - ssl
+    - mod/rewrite
+
+- Test
+  - using lynx or telnet, test the web service is running
+    OR
+    - wait for port 80 listening
+  - register output for the service status as JSON on the completion of the playbook
