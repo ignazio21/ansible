@@ -1,0 +1,76 @@
+$cd /home/vagrant/playbooks/usecases/
+# create a role
+$mkdir redhat.apachewebserver
+$cd redhat.apachewebserver
+$cp -rf /home/vagrant/playbooks/roles/testrole/* .
+$ls -la
+-> defaults
+-> tasks
+-> ...
+
+-> In the remote system
+$sudo yum remove httpd lynx telnet
+$rm -rf /etc/httpd
+$rm -rf /var/www/sample
+
+-> In the control server
+$cd /home/vagrant/playbooks/usecases/redhat.apachewebserver/files/
+$cp ../../files/* .
+-> default.conf.template
+-> httpd.conf.template
+-> sitecode.tar.gz
+
+$cd ../handlers/
+# Copy the handlers section in webserver.optimize.yml in here
+$vi main.yml
+- name: Start Httpd
+  service: name={{ apache_pkg }} state=started
+- name: Test Httpd
+  shell: curl http://{{ apache_fqdn }}
+  register: result
+- name: Display Result
+  debug: var=result
+
+$cd ../tasks/
+# Copy the tasks section in webserver.optimize.yml in here
+$vi mail.yml
+- name: Install the Web Server Package
+  yum: pkg={{ apache_pkg }} state=latest
+- name: Create the web server directory
+  file: path={{ apache_dir }} state=directory mode=644
+- name: Copy the apache configuration file (locally) to remote hosts
+  copy: src=files/httpd.conf.template dest=/etc/httpd/conf/httpd.conf owner=root group=root mode=644
+- name: Create the VHOST.D Directory on the remote host
+  file: path=/etc/httpd/vhost.d state=directory mode=755
+# copy and untar the source code for the website we are dealing for
+# that we want to deploy
+- name: Copy and untar the sorce for the site
+  unarchive: src=files/sitecode.tar.gz dest={{ apache_dir }}
+- name: Copy the default vhost configuration file
+  copy: src=files/default.conf.template dest=/etc/httpd/vhost.d/default.conf owner=root group=root mode=644
+  notify:
+    - Start Httpd
+    - Test Httpd
+    - Display Result
+
+$cd ../vars/
+# Copy the vars section from webserver.optimize.yml to here
+$vi main.yml
+apache_pkg: httpd
+distribution: "{{ ansible_os_family }}"
+apache_version: 2.4
+apache_dir: /var/www/sample
+apache:fqdn: whatever.domain.com
+
+
+$vi webserver.optimize.yml
+--- # Master Playbook for Role Based Apache Web Deployments
+- hosts: apacheweb
+  user: vagrant
+  become: yes
+  connection: ssh
+  roles:
+  -  redhat.apachewebserver
+
+-> Run the playbook
+$ansible-playbook webserver.optimize.yml

@@ -1,0 +1,33 @@
+# Creating an NFS Server Deployment - Playbook First Pass
+
+$cd /home/vagrant/playbook/usecases/
+
+$vi mynfsserver.yml
+--- # NFS Server Playbook
+
+- hosts: appserver
+  user: vagrant
+  become: yes
+  connection: ssh
+  vars:
+    distribution: RedHat
+    nfsutils_pkg: nfs-utils
+    nfslibs_pkg: nfs-utils-lib
+    nfsserver_service: nfs-server
+    nfslock_service: nfs-lock
+    nfsmap_service: nfs-idmap
+    rpcbind_service: rpcbind
+    export_path: /var/share
+  tasks:
+    - name: Install NFS server and utilities
+      yum: pkg={{ nfsutils_pkg }} state=latest
+    - name: Install the NFS server libraris
+      yum: pkg={{ nfslibs_pkg }} state=latest
+    - name: Copy the export file to remote server
+      copy: src=files/exports.template dest=/etc/exports owner=root group=root mode=644
+    - name: Start the RPC Bind Service
+      service: name={{ rpcbind_service }} state=started
+    - name: Start the NFS Server Service
+      service: name={{ nfsserver_service }}
+    - name: Start the file lock service
+      service: name={{ nfslock_service }} state=started

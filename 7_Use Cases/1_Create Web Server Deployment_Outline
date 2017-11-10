@@ -1,3 +1,10 @@
+#### Things to accomplish in this module ###
+# Running web server(s)
+# Having a DB running behind
+# Retrieving data from a NFS system
+######
+
+
 $mkdir /home/vagrant/usecases
 
 $vi mywebserver.txt

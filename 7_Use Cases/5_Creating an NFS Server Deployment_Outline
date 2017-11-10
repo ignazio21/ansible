@@ -1,0 +1,32 @@
+# Creating an Outline file to define steps to run an NFS system
+# Ex. Samba as NFS
+
+# 
+
+$cd /home/vagrant/playbook/usecases/
+$vi mynfsserver.txt
+- Installing and configuring an NFS static content server for web use
+- Installation and configuration done with the ansible user
+- The ansible user need to be sudo
+- Gath. Facts on
+- SSH connection
+
+- What we need to know
+  - Distribution of the system deploying on
+  - NFS server and client pkg names
+  - path to the shared file space
+  - the server/group we are installing NFS on
+
+- What to do / install
+  - install NFS server/client and utilities
+  - export the shared directory (/etc/exports)
+  - add our lab network (internal)
+  - configure the filesystem export for read/write on known networks
+    - disable any unkown network or user connectivity
+  - start the NFS service
+  - cron job to backup the filesystem
+  - NFS client installs? - common role
+    - NFS Client /etc/fstab configuration to mount the share on boot..?
+
+- Test
+  - capture the NFS server service status as a JSON output and register the result
