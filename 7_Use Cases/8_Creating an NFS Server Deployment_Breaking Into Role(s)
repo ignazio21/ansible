@@ -1,0 +1,130 @@
+$cd /home/vagrant/playbook/usecases/
+$mkdir nfs.server
+$mkdir nfs.client
+$cp -rf ../redhat.apachewebserver/* nfs.server/
+$cp -rf ../redhat.apachewebserver/* nfs.client/
+
+$cd nfs.server
+-> defaults
+-> files
+-> vars
+-> tasks
+....
+
+$cd files
+$cp ../../files/exports.template .
+cd ../vars
+
+$vi main.yml
+distribution: RedHat
+nfsutils_pkg: nfs-utils
+nfslibs_pkg: nfs-utils-lib
+nfsserver_service: nfs-server
+nfslock_service: nfs-lock
+nfsmap_service: nfs-idmap
+rpcbind_service: rpcbind
+export_path: /var/share
+client_path: /mnt/remote
+
+$cd ../tasks
+$vi main.yml
+# SERVER SIDE
+- name: Install all the NFS server utilities, services and libraries
+  yum: pkg={{ item }} state=latest
+  with_items:
+     - "{{ nfsutils_pkg }}"
+     - "{{ nfslibs_pkg }}"
+- name: Copy the export file to remote server
+  copy: src=exports.template dest=/etc/exports owner=root group=root mode=644
+  notify:
+    - StartServerServices
+
+$cd ../handlers
+$vi main.yml
+- name: StartServerServices
+  service: name={{ item }} state=restarted
+  with_items:
+  - "{{ rpcbind_service }}"
+  - "{{ nfsserver_service }}"
+  - "{{ nfslock_service }}"
+  - "{{ nfsmap_service }}"
+
+$cd ../../nfs.client
+$cd vars
+$vi main.yml
+distribution: RedHat
+nfsutils_pkg: nfs-utils
+nfslibs_pkg: nfs-utils-lib
+nfsserver_service: nfs-server
+nfslock_service: nfs-lock
+nfsmap_service: nfs-idmap
+rpcbind_service: rpcbind
+export_path: /var/share
+client_path: /mnt/remote
+
+$cd ../tasks
+$vi main.yml
+- name: Copy the export file to remote server
+  copy: src=exports.template dest=/etc/exports owner=root group=root mode=644
+  notify:
+  - InstallClientPackages
+  - CreateClientMount
+  - ClientMountServerResource
+  - TestServerAvailability
+
+$cd ../handlers
+$vi main.yml
+# CLIENT SIDE
+# Delegate the Control server (localhost) to be the NFS Client
+- name: InstallClientPackages
+  service: name={{ item }} state=latest
+  with_items:
+  - "{{ nfsutils_pkg }}"
+  - "{{ nfslibs_pkg }}"
+  notify: StartClientServices
+- name: StartClientServices
+  service: name={{ item }} state=restarted
+  with_items:
+  - "{{ rpcbind_service }}"
+  - "{{ nfslock_service }}"
+  - "{{ nfsmap_service }}"
+- name: CreateClientMount
+  file: path={{ client_path }} state=directory mode=755
+- name: ClientMountServerResource
+  shell: mount -t nfs <appserver>.<domain>.com:{{ export_path }} {{ client_path }}
+  register: result
+- name: TestServerAvailability
+  debug: var=result
+
+
+-> Now create couple of playbook roles
+$vi nfsserver.yml
+--- # Master Playbook for the NFS Server
+- hosts: <appserver>
+  user: vagrant
+  become: yes
+  connection: ssh
+  roles:
+  - nfs.server
+
+$vi nfsclient.yml
+--- # Master Playbook for the NFS Client
+- hosts: <nfsclient>(the controller this case)
+  user: vagrant
+  become: yes
+  connection: ssh
+  roles:
+  - nfs.client
+
+->Run the SERVER YML
+$ansible-playbook nfsserver.yml --check
+$ansible-playbook nfsserver.yml
+
+-> In the Client server
+$cd nfs.client/files
+$cp ../../files/exports.template .
+
+-> In the controller (that is the client)
+-> Run the Client YML
+$ansible-playbook nfsclient.yml --check
+$ansible-playbook nfsclient.yml

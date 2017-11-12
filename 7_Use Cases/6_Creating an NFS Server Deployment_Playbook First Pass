@@ -1,4 +1,5 @@
 # Creating an NFS Server Deployment - Playbook First Pass
+#
 
 $cd /home/vagrant/playbook/usecases/
 
@@ -19,9 +20,10 @@ $vi mynfsserver.yml
     rpcbind_service: rpcbind
     export_path: /var/share
   tasks:
+    # SERVER SIDE
     - name: Install NFS server and utilities
       yum: pkg={{ nfsutils_pkg }} state=latest
-    - name: Install the NFS server libraris
+    - name: Install the NFS server libraries
       yum: pkg={{ nfslibs_pkg }} state=latest
     - name: Copy the export file to remote server
       copy: src=files/exports.template dest=/etc/exports owner=root group=root mode=644
@@ -31,3 +33,43 @@ $vi mynfsserver.yml
       service: name={{ nfsserver_service }}
     - name: Start the file lock service
       service: name={{ nfslock_service }} state=started
+
+     # CLIENT SIDE
+     # Delegate the Control server (localhost) to be the NFS Client
+    - name: Install NFS Client and utilities
+      yum: pkg={{ nfsutils_pkg }} state=latest
+      delegate_to: 127.0.0.1
+    - name: Install the NFS Client server libraries
+      yum: pkg={{ nfslibs_pkg }} state=latest
+      delegate_to: 127.0.0.1
+    - name: Start Service for Client RPC
+      service: name={{ rpcbind }} state=started
+      delegate_to: 127.0.0.1
+    - name: Start NFS Client File Lock Service
+      service: name={{ nfslock_service }} state=started
+      delegate_to: 127.0.0.1
+    - name: Start NFS Client Map Service
+      service: name:{{ nfsmap_service }} state=started
+      delegate_to: 127.0.0.1
+    - name: Create Client Mount Directory
+      file: path=/mnt/remote state=directory mode=755
+      delegate_to: 127.0.0.1
+    - name: Mount the filesystem on the client from the NFS server
+      mount: name=/mnt/remote src=/var/share fstype=nfs state=present
+      delegate_to: 127.0.0.1
+
+-> In the controller server
+$cp /home/vagrant/usecases/files/exports.template .
+$cat exports.template
+/var/share <controller_server>.<domain>.com(rw,sync,no_root_squash,no_all_squash)
+
+-> Run the playbook
+$ansible-playbook mynfsserver.yml --check
+$ansible-playbook mynfsserver.yml
+
+
+-> In the controller
+$df -h
+  -> Check for <server>.<domain>.com:/var/share
+
+ 

@@ -1,0 +1,86 @@
+
+$cd /home/vagrant/playbook/usecases/
+$cp mynfsserver.yml mynfsserver.optimize.yml
+
+
+$vi mynfsserver.optimize.yml
+--- # NFS Server Playbook
+
+- hosts: appserver
+  user: vagrant
+  become: yes
+  connection: ssh
+  vars:
+    distribution: RedHat
+    nfsutils_pkg: nfs-utils
+    nfslibs_pkg: nfs-utils-lib
+    nfsserver_service: nfs-server
+    nfslock_service: nfs-lock
+    nfsmap_service: nfs-idmap
+    rpcbind_service: rpcbind
+    export_path: /var/share
+    client_path: /mnt/remote
+  tasks:
+    # SERVER SIDE
+    - name: Install all the NFS server utilities, services and libraries
+      yum: pkg={{ item }} state=latest
+      with_items:
+         - "{{ nfsutils_pkg }}"
+         - "{{ nfslibs_pkg }}"
+    - name: Copy the export file to remote server
+      copy: src=files/exports.template dest=/etc/exports owner=root group=root mode=644
+      notify:
+        - StartServerServices
+        - InstallClientPackages
+        - CreateClientMount
+        - ClientMountServerResource
+        - TestServerAvailability
+   handlers:
+    - name: StartServerServices
+      service: name={{ item }} state=restarted
+      with_items:
+      - "{{ rpcbind_service }}"
+      - "{{ nfsserver_service }}"
+      - "{{ nfslock_service }}"
+      - "{{ nfsmap_service }}"
+     # CLIENT SIDE
+     # Delegate the Control server (localhost) to be the NFS Client
+    - name: InstallClientPackages
+      service: name={{ item }} state=latest
+      with_items:
+      - "{{ nfsutils_pkg }}"
+      - "{{ nfslibs_pkg }}"
+      delegate_to: 127.0.0.1
+      notify: StartClientServices
+    - name: StartClientServices
+      service: name={{ item }} state=restarted
+      with_items:
+      - "{{ rpcbind_service }}"
+      - "{{ nfslock_service }}"
+      - "{{ nfsmap_service }}"
+      delegate_to: 127.0.0.1
+    - name: CreateClientMount
+      file: path={{ client_path }} state=directory mode=755
+      delegate_to: 127.0.0.1
+    - name: ClientMountServerResource
+      shell: mount -t nfs <appserver>.<domain>.com:{{ export_path }} {{ client_path }}
+      register: result
+      delegate_to: 127.0.0.1
+    - name: TestServerAvailability
+      debug: var=result
+
+-> Run the playbook
+$ansible-playbook mynfsserver.optimize.yml --check
+$ansible-playbook mynfsserver.optimize.yml
+
+
+-> In the controll server:
+$df -h
+$ls -la /mnt/remote
+$sudo umount /mnt/remote
+$sudo /home/vagrant/uninstall.sh
+-> Uninstall NFS services
+
+-> In the AppServer:
+$sudo /home/vagrant/uninstall.sh
+-> Uninstall NFS services

@@ -1,0 +1,61 @@
+$vi mydbserver.yml
+--- # DATABASE Deployment
+- hosts: appserver
+  user: vagrant
+  become: yes
+  connection: ssh
+  vars:
+    dbserver_pkg: mariadb-server
+    dbclient_pkg: mariadb
+    dbserver_fqdn: <appserver>.<domain>.com
+    dbinstalldir: /var/lib
+    dbinstancename: MyDBTest
+    dbdistribution: RedHat
+    dbversion: 5.5.44
+  tasks:
+   - name: Install the MariaDB server
+     yum: pkg={{ dbserver_pkg }} state=latest
+   - name: Install the MariaDB Client Utilities
+     yum: pkg={{ dbclient_pkg }} state=latest
+   - name: Start the DB service
+     service: name={{ dbclient_pkg }} state=started
+   - pause: prompt="Please run the mysql_secure_installation binary and the press Enter for the playbook to continue"
+   - name: Restart the DB service
+     service: name={{ dbclient_pkg }} state=restarted
+   - name: Copy the remote db in order to restore
+     copy: src=files/mysqlbkp.sql dest=/var/lib/mysqlbkp.sql owner=root group=root mode=755
+   - name: Create the remote DB instance
+     shell: mysqladmin -u root -ppassword123 create MyDBTest
+   - name: Import the db backup to the live db
+     shell: mysql -u root -ppassword123 MyDBTest < /var/lib/mysqlbkp.sql
+     register: result
+   - debug: var=result
+   - name: Add a backup CRON Job to run every day at midnight
+     cron: name="DBBackup" minute="0" hour="0" job="mysqldump -u root -ppassword123 --databases MyDBTest > dbbkp.sql"
+   - name: Run a Quick SQL Command to be sure everything was created and is working
+     shell: mysql -u root -ppassword -e 'SHOW DATABASES;'
+     register: mysqlresult
+   - debug: var=mysqlresult
+
+$cat files/mysqlbkp.sql
+-> This is a file to create a DB with a table Persons having three people added
+
+-> Run the playbook
+   -> IN the APPServer run:
+     $sudo mysql_secure_installation
+     -> Set the root password as "password123"
+     -> Remove anonymous users(Y)
+     -> Disallow root login remotely(Y)
+     -> Remove test database and access to it(Y)
+     -> Reload privilege tables now(Y)
+   -> Run the following to check the DB status:
+    $sudo systemctl status mariadb
+-> Press ENTER in the CONTROLL server
+
+-> ON the appserver check:
+  $sudo crontab -l
+  $mysql -u root -p ppassword123
+  $show databases;
+  -> Check MyDBTest
+  $use MyDBTest;
+  $select * from Persons;

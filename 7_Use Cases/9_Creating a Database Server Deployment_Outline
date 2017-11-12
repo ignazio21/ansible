@@ -1,0 +1,28 @@
+$cd /home/vagrant/playbook/usecases/
+$vi mydbserver.txt
+
+- Installing and configuring a MariaDB Server (Master)
+- The installation will be done with the ansible user
+- the installation need to be done with sudo priv.
+- ssh connection
+- gath. facts ON
+
+- what we need to know?
+  - the package name of the DB Server
+  - the group/host of the master Server
+  - the directory for installing the DB (if not default)
+  - version of DB
+  - distribution it is installed on
+
+- what need do be done/installed
+  - install MariaDB Server and Utilities
+  - root password install
+  - waitfor the db service to be started
+    - takes place manually after the mysql-secure-installation run
+  - install the mysql/mariadb configuration file (if needed)
+  - copy the mysql/mariadb database backup to the home directory
+  - import the database(s)
+  - add cronjob for nightly backups
+
+- Testing the DB
+  - run a mysql command and register the output as JSON format to determine success

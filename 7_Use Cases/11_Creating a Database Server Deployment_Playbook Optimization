@@ -1,0 +1,60 @@
+$cd /home/vagrant/playbook/usecases/
+
+$vi mydbserver.yml
+--- # DATABASE Deployment
+- hosts: appserver
+  user: vagrant
+  become: yes
+  connection: ssh
+  vars:
+    dbserver_pkg: mariadb-server
+    dbclient_pkg: mariadb
+    dbserver_fqdn: <appserver>.<domain>.com
+    dbinstalldir: /var/lib
+    dbinstancename: MyDBTest
+    dbdistribution: RedHat
+    dbversion: 5.5.44
+  tasks:
+   - name: Install ALL the MariaDB packages(Client and Server)
+     yum: pkg={{ item }} state=latest
+     with_items:
+     - "{{ dbserver_pkg }}"
+     - "{{ dbclient_pkg }}"
+     notify:
+     - StartDBService
+     - RunSecureInstallPause
+     - RestartDBService
+     - CopyBkupFile
+     - CreateRemoteDB
+     - DisplayCreationResults
+     - RestoreRemoteDB
+     - TestDBResults
+     - ShowDBResults
+   - name: Add a backup CRON Job to run every day at midnight
+     cron: name="DBBackup" minute="0" hour="0" job="mysqldump -u root -ppassword123 --databases {{ dbinstancename }} > dbbkp.sql"
+  handlers:
+   - name: StartDBService
+     service: name={{ dbclient_pkg }} state=started
+   - name: RunSecureInstallPause
+     pause: prompt="Please run the mysql_secure_installation binary and the press Enter for the playbook to continue"
+   - name: RestartDBService
+     service: name={{ dbclient_pkg }} state=restarted
+   - name: CopyBkupFile
+     copy: src=files/mysqlbkp.sql dest={{ dbinstalldir }}/mysqlbkp.sql owner=root group=root mode=755
+   - name: CreateRemoteDB
+     shell: mysqladmin -u root -ppassword123 create {{ dbinstancename }}
+     register: result
+   - name: DisplayCreationResults
+     debug: var=result
+   - name: RestoreRemoteDB
+     shell: mysql -u root -ppassword123 {{ dbinstancename }} < {{ dbinstalldir }}/mysqlbkp.sql
+     register: result
+   - name: TestDBResults
+     shell: mysql -u root -ppassword123 -e 'SHOW DATABASES;'
+
+
+-> Run the playbook
+$ansible-playbook mydbserver.yml
+  -> In the while in the appserver
+  $sudo mysql_secure_installation
+-> Press Enter in the control server
