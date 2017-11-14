@@ -1,0 +1,14 @@
+$vi aplaybook.yml
+
+....
+tasks:
+  - name: Simple find on fstab file
+    find: paths="/etc" patterns="fstab" recurse="yes" size="12k/12m/12g" age="300/30m/30d/30w/30y" regex=True
+    register: result
+  - debug: var=result
+  - name: To look to LOG files 
+    find: paths="/var/log" recurse="yes" size="10k" patterns='*.log'
+    register: log_result
+  - debug: var: log_result
+
+  # THIS to get INFORMATION regarding ALL the files specified in FIND

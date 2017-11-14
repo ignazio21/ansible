@@ -1,0 +1,60 @@
+-> From SECOND HOST
+-> become root
+$su -
+$adduser test
+$passwd test
+$visudo
+
+->
+# Allow root to run any commands anywhere
+root    ALL=(ALL)   ALL
+test    ALL=(ALL)   NOPASSWD: ALL
+
+$su - test
+-> TO EXCHANGE THE KEY
+[test@second_host]$ssh-keygen
+[test@second_host]$ssh-copy-id <FIRST_HOST>
+
+-> FROM SECOND HOST SSH TO FIRST HOST
+[test@second_host]$ssh FIRST_HOST
+
+  -> SEE that we can now login with KEY EXCHANGE
+
+-> FROM SECOND HOST
+[test@second_host ~]$mkdir ansibletmp
+$cd ansibletmp
+$sudo yum install epel-release
+$sudo yum update
+$sudo yum install ansible
+  -> This will install the dependencies for ansible
+
+-> Now UNISTALL ONLY the ANSIBLE PKG to be able to install the correct version
+$sudo yum remove ansible
+
+-> The VERSION 2.0 is going to be installed from a GIT REPO
+$sudo yum install git
+$git clone git://github.com/ansible/ansible.git --recursive
+
+$cd ansible/
+$make
+$sudo make install
+
+-> Check version
+$ansible --version
+
+-> Modify the HOSTS file
+$cd examples/
+$mkdir /etc/ansible/
+$sudo cp -rf * /etc/ansible/
+$cd /etc/ansible/
+$sudo mv hosts hosts.original
+$sudo vi hosts
+[test]
+localhost
+<first_host>
+
+[test@second_host]$ssh-copy-id localhost
+
+-> test
+
+$ansible all -m ping

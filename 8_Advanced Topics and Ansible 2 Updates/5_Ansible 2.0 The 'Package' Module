@@ -1,0 +1,12 @@
+
+-> PACKAGE is used to install on ALL Distribution
+
+$cd /home/vagrant/playbook/
+$mkdir ansible2
+$cd ansible2
+$vi ansible2test.yml
+
+....
+tasks:
+  - name: Install Telnet on ALL Distribution Types
+    package: name=telnet state=latest
